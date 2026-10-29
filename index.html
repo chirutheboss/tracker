@@ -10,7 +10,9 @@
       const today = getTodayISTDate();
       const selected = $('pDate').value;
       if (!selected || selected < today) $('pDate').value = (today >= MIN_D && today <= MAX_D) ? today : MIN_D;
-      const m = byDate(), d = $('pDate').value, ents = m[d] || [];
+      const m = byDate() || {};
+      const d = $('pDate').value;
+      const ents = Array.isArray(m[d]) ? m[d] : [];
       $('pDateLbl').textContent = d ? fmtDate(d) : '(pick a date)';
       let h = '';
       SUBJECTS.filter(x => ents.some(e => e.subject === x)).forEach(sub => {
@@ -21,8 +23,14 @@
         h += '</div>';
       });
       $('pList').innerHTML = h || '<div class="empty" style="margin-bottom:0">Nothing planned for this day yet.</div>';
-      $('pChips').innerHTML = Object.keys(m).filter(x => x >= today && x >= MIN_D).sort().map(x =>
-        '<button class="chip' + (x === d ? ' sel' : '') + '" onclick="jumpDate(\'' + x + '\')">' + fmtDate(x) + ' • ' + m[x].length + '</button>').join('') || '<span style="font-size:11px;font-weight:700;color:#555">No planned days yet.</span>';
+      $('pChips').innerHTML = Object.keys(m)
+        .filter(x => x >= today && x >= MIN_D)
+        .sort()
+        .map(x => {
+          const count = Array.isArray(m[x]) ? m[x].length : 0;
+          return '<button class="chip' + (x === d ? ' sel' : '') + '" onclick="jumpDate(\'' + x + '\')">' + fmtDate(x) + ' • ' + count + '</button>';
+        })
+        .join('') || '<span style="font-size:11px">No upcoming dates</span>';
     }
     function addTopic() {
       const date = $('pDate').value, subj = $('pSubj').value, topic = $('pTopic').value.replace(/\s+/g, ' ').trim(), msg = $('pMsg');
