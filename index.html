@@ -1,20 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mission Jan 27 Tracker</title>
+  <link rel="stylesheet" href="tw.css">
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFFDF6">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #FFFDF6;
+      color: #121212;
+      overflow-x: hidden;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .brutal-border {
+      border: 3px solid #121212;
+    }
+    .brutal-shadow {
+      box-shadow: 4px 4px 0px #121212;
+    }
+    .brutal-shadow-sm {
+      box-shadow: 2.5px 2.5px 0px #121212;
+    }
+    .brutal-shadow-lg {
+      box-shadow: 6px 6px 0px #121212;
+    }
+    .brutal-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #121212;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: #ef4444; }
+      50% { border-color: #000000; }
+    }
+    .alert-pulse {
+      animation: pulse-border 1.4s infinite;
+    }
+
+    header .max-w-md > div:first-child{min-width:0}
+    header h1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .card{background:#fff;border:3px solid #121212;box-shadow:4px 4px 0 #121212;padding:14px;min-width:0}
+    .lbl{display:block;font-size:10px;font-weight:900;text-transform:uppercase;color:#555;margin:12px 0 4px}
+    .fld{display:block;width:100%;min-width:0;max-width:100%;min-height:46px;border:3px solid #121212;background:#FAF8F0;padding:8px 10px;font:700 16px 'Space Grotesk',sans-serif;color:#121212;border-radius:0}
+    .fld:focus{outline:3px solid #FF4D00;outline-offset:1px}
+    .bigbtn{display:block;width:100%;min-height:46px;margin-top:14px;border:3px solid #121212;box-shadow:2.5px 2.5px 0 #121212;background:#00E599;font:900 13px 'Space Grotesk',sans-serif;text-transform:uppercase;color:#121212;border-radius:0}
+    .rw{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-top:8px}
+    .tx{flex:1;min-width:0;overflow-wrap:anywhere;font-size:12px;font-weight:700;line-height:1.35}
+    .tx.fin{text-decoration:line-through;color:#9ca3af}
+    .tg{display:inline-block;font-size:9px;font-weight:900;padding:1px 6px;border:2px solid #121212;text-transform:uppercase}
+    .day{border:3px solid #121212;box-shadow:2.5px 2.5px 0 #121212;padding:12px;margin-bottom:12px;min-width:0}
+    .dh{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #121212;padding-bottom:6px;flex-wrap:wrap}
+    .dt{font-size:12px;font-weight:900;text-transform:uppercase}
+    .pill{font-size:8px;font-weight:900;text-transform:uppercase;padding:2px 6px;border:2px solid #121212;white-space:nowrap}
+    .dn,.xb{flex-shrink:0;min-height:34px;border:3px solid #121212;padding:4px 8px;font:900 9px 'Space Grotesk',sans-serif;text-transform:uppercase;background:#fff;color:#374151}
+    .dn.on{background:#4ADE80;color:#000}
+    .xb{background:#FF9F89;color:#000;font-size:12px;min-width:34px}
+    .sh{font-size:10px;font-weight:900;text-transform:uppercase;color:#555;margin:2px 0 8px}
+    .sg{margin-top:10px}
+    .empty{font-size:11px;font-weight:700;color:#555;border:2px dashed #121212;padding:12px;margin-bottom:12px}
+    .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .tile{display:block;text-align:left;border:3px solid #121212;box-shadow:2.5px 2.5px 0 #121212;padding:8px 10px;min-width:0;font:700 12px 'Space Grotesk',sans-serif}
+    .tile.sel{outline:3px solid #FF4D00;outline-offset:2px}
+    .tile b{display:block;font-size:12px;font-weight:900;overflow-wrap:anywhere}
+    .tile .mono{font-size:15px;font-weight:800}
+    .tile i{display:block;font-size:9px;font-style:normal;font-weight:900;text-transform:uppercase}
+    .bar{height:7px;border:2px solid #121212;background:#fff;margin-top:5px}
+    .bar div{height:100%;background:#121212}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .chip{border:2px solid #121212;background:#fff;padding:5px 8px;font:800 10px 'Space Grotesk',sans-serif;min-height:30px}
+    .chip.sel{background:#FFDE00}
+    .sync{display:block;margin-left:auto;font-size:9px;font-weight:900;text-transform:uppercase;border:2px solid #121212;background:#fff;padding:3px 8px;width:max-content;max-width:100%}
+    .tmrow{font-size:10px;font-weight:700;color:#444;margin-top:6px}
+  </style>
+</head>
+<body class="min-h-screen pb-32">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-[#FFDE00] brutal-border border-t-0 border-x-0 p-3.5 sticky top-0 z-40 brutal-shadow">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-2">
+      <div>
+        <div class="bg-black text-[#FFDE00] font-black px-1.5 py-0.5 text-[9px] uppercase tracking-wider inline-block">
+          ICAI INTER • MISSION JAN 27
+        </div>
+        <h1 class="text-lg font-black uppercase tracking-tight leading-tight mt-0.5">
+          <span id="hdrTitle">Mission Jan 27</span>
+        </h1>
+      </div>
+      <div class="text-right bg-white brutal-border brutal-shadow-sm px-2.5 py-1 shrink-0">
+        <div class="text-[8px] font-black uppercase text-gray-500">Live IST (12H)</div>
+        <div id="liveClock" class="mono text-xs font-black text-black">--:--:-- --</div>
+        <div id="liveDateStr" class="text-[9px] font-bold text-gray-700">Loading...</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-md mx-auto p-3 space-y-4">
+    <button id="syncBar" class="sync" onclick="sync()">● Starting…</button>
+
+    <!-- Savage Reality Check Banner -->
+    <div id="accountabilityBanner" class="hidden"></div>
+
+    <!-- TAB 1: SPRINT & TIMER -->
+    <div id="tabContentSprint" class="space-y-4">
+
+      <!-- Overall 3-Day Progress Stats -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="bg-white brutal-border brutal-shadow-sm p-3">
+          <span class="text-[10px] font-black uppercase text-gray-600 block">Overall Progress</span>
+          <span id="sprintProgressPct" class="mono text-2xl font-black text-[#121212]">0%</span>
+          <div class="w-full bg-gray-200 h-2 brutal-border mt-1.5 overflow-hidden">
+            <div id="sprintProgressBar" class="bg-[#FF4D00] h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <div class="bg-[#B8FFDA] brutal-border brutal-shadow-sm p-3">
+          <span class="text-[10px] font-black uppercase text-gray-700 block">Topics Cleared</span>
+          <span id="chaptersClearedCount" class="mono text-2xl font-black text-[#121212]">0 / 6</span>
+          <span class="text-[9px] font-bold text-gray-600 block mt-0.5">Topics Total</span>
+        </div>
+      </div>
+
+      <!-- Deep Work Reading Timer & Hydration Deck -->
+      <section class="bg-white brutal-border brutal-shadow p-3.5 space-y-3">
+        <div class="flex items-center justify-between border-b-2 border-black pb-2">
+          <div>
+            <span class="bg-black text-white px-1.5 py-0.5 text-[9px] font-black uppercase">Deep Work Session</span>
+            <h2 class="text-xs font-black uppercase tracking-tight mt-0.5">Reading Stopwatch</h2>
+          </div>
+          <button id="btnEnableNotifications" onclick="requestNotificationPermission()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FFDE00] px-2 py-1 text-[9px] font-black uppercase">
+            🔔 Alerts
+          </button>
+        </div>
+
+        <!-- Stopwatch Display -->
+        <div class="bg-[#FAF8F0] brutal-border p-3.5 text-center space-y-2">
+          <div class="text-[9px] font-black uppercase text-gray-500">Active Reading Session</div>
+          <div id="sessionStopwatch" class="mono text-4xl font-black tracking-tight text-black">
+            00:00:00
+          </div>
+          
+          <!-- Distinct Play and Pause Controls -->
+          <div class="flex items-center justify-center gap-2 pt-1">
+            <button id="btnPlayTimer" onclick="startTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#00E599] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1.5">
+              <span>▶</span> Play
+            </button>
+            <button id="btnPauseTimer" onclick="pauseTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FFDE00] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1.5">
+              <span>⏸</span> Pause
+            </button>
+            <button id="btnResetTimer" onclick="resetTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FF9F89] text-black font-black px-3 py-2 text-xs uppercase">
+              Reset
+            </button>
+          </div>
+          <div id="timerStatusLabel" class="text-[10px] font-bold text-gray-600">Status: Paused • Ready to read</div>
+        </div>
+
+        <!-- 50-Min Hydration Bar -->
+        <div class="bg-[#E3D1FF] brutal-border p-2.5 flex items-center justify-between gap-2">
+          <div>
+            <div class="text-[9px] font-black uppercase flex items-center gap-1">
+              💧 50-Min Water Loop
+            </div>
+            <div id="nextWaterCountdown" class="mono text-xs font-black text-black mt-0.5">
+              50m 00s (Paused)
+            </div>
+          </div>
+          <button onclick="playWaterChime()" class="brutal-border brutal-shadow-sm brutal-btn bg-white px-2 py-1 text-[8px] font-black uppercase">
+            🔊 Test Chime
+          </button>
+        </div>
+      </section>
+
+      <!-- SM Targets Checklist -->
+      <section class="bg-white brutal-border brutal-shadow p-3.5 space-y-3">
+        <div class="flex items-center justify-between border-b-2 border-black pb-2">
+          <div>
+            <span class="bg-[#FF4D00] text-white px-1.5 py-0.5 text-[9px] font-black uppercase">Syllabus Breakdown</span>
+            <h3 class="text-xs font-black uppercase tracking-tight mt-0.5">
+              Today &amp; Coming Up
+            </h3>
+          </div>
+          <span id="todayRegistrationBadge" class="text-[8px] font-black uppercase px-2 py-0.5 brutal-border bg-amber-100 text-amber-800">
+            ⚠️ Unregistered
+          </span>
+        </div>
+
+        <div id="dailyScheduleCards" class="space-y-3">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+    </div>
+
+    <!-- TAB 2: OVERALL LOG -->
+    <div id="tabContentProgress" class="hidden space-y-3">
+      <div class="card" style="background:#A8E6FF">
+        <h2 class="text-sm font-black uppercase tracking-tight">Overall Reading Log</h2>
+        <p id="logTotals" style="font-size:11px;font-weight:600;margin-top:3px"></p>
+        <p style="font-size:10px;font-weight:600;margin-top:3px;color:#333">Tap a subject to filter. Tap again to clear.</p>
+      </div>
+      <div id="subjTiles" class="tiles"></div>
+      <div id="progressLogList"></div>
+    </div>
+
+    <!-- TAB 3: PLAN -->
+    <div id="tabContentPlan" class="hidden space-y-3">
+      <div class="card" style="background:#E3D1FF">
+        <h2 class="text-sm font-black uppercase tracking-tight">Plan Your Day</h2>
+        <p style="font-size:11px;font-weight:600;margin-top:3px;line-height:1.35">Pick a date, pick a subject, type a topic, tap Add. Repeat for more topics or more subjects on the same day.</p>
+      </div>
+      <div class="card">
+        <label class="lbl" for="pDate" style="margin-top:0">Date (Oct - Dec 2026)</label>
+        <input id="pDate" type="date" class="fld" oninput="renderPlan()" onchange="renderPlan()">
+        <label class="lbl" for="pSubj">Subject</label>
+        <select id="pSubj" class="fld"></select>
+        <label class="lbl" for="pTopic">Topic</label>
+        <input id="pTopic" type="text" maxlength="120" class="fld" placeholder="e.g. Audit Evidence" autocomplete="off" onkeydown="if(event.key==='Enter'){addTopic()}">
+        <button class="bigbtn brutal-btn" onclick="addTopic()">+ Add topic</button>
+        <div id="pMsg" style="font-size:11px;font-weight:800;margin-top:8px;min-height:14px"></div>
+      </div>
+      <div class="card">
+        <div class="sh">Planned for <span id="pDateLbl"></span></div>
+        <div id="pList"></div>
+        <div class="sh" style="margin-top:14px">Jump to a planned day</div>
+        <div id="pChips" class="chips"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Mobile Bottom Tab Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-[#FFDE00] brutal-border border-b-0 border-x-0 p-2 z-40 brutal-shadow-lg">
+    <div class="max-w-md mx-auto grid grid-cols-3 gap-2">
+      <button id="navBtnSprint" onclick="switchTab('sprint')" class="brutal-border brutal-shadow-sm brutal-btn bg-black text-white font-black py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
+        <span>🎯</span> Sprint
+      </button>
+      <button id="navBtnProgress" onclick="switchTab('progress')" class="brutal-border brutal-shadow-sm brutal-btn bg-white text-black font-black py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
+        <span>📈</span> Log
+      </button>
+      <button id="navBtnPlan" onclick="switchTab('plan')" class="brutal-border brutal-shadow-sm brutal-btn bg-white text-black font-black py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
+        <span>✏️</span> Plan
+      </button>
+    </div>
+  </nav>
+
+  <!-- Savage Reality Modal (11:00 AM IST Audit) -->
+  <div id="savageModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#FFE4D6] brutal-border brutal-shadow-lg max-w-sm w-full p-4 alert-pulse space-y-3 text-[#121212]">
+      <div class="bg-red-600 text-white inline-block px-2 py-0.5 font-black uppercase text-[9px]">
+        ⚠️ 11:00 AM IST REALITY CHECK
+      </div>
+      <h3 class="text-base font-black uppercase tracking-tight text-red-700 leading-tight">
+        You Have Pending Targets. You Are Lagging Behind!
+      </h3>
+      <div class="bg-white brutal-border p-2.5 text-xs space-y-1 font-medium">
+        <p class="text-gray-900">
+          This is your <strong>4th CA Inter attempt</strong>. This is a short sprint. Skipping yesterday puts your syllabus straight into backlog.
+        </p>
+        <p class="font-black text-red-600">
+          Clear your pending topics before starting anything new!
+        </p>
+      </div>
+      <button onclick="closeSavageModal()" class="w-full brutal-border brutal-shadow-sm brutal-btn bg-black text-white font-black py-2 uppercase text-xs">
+        Understood • Going to Desk Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Hydration Modal Alert -->
+  <div id="waterModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#B8FFDA] brutal-border brutal-shadow-lg max-w-xs w-full p-4 space-y-3 text-center">
+      <div class="text-3xl animate-bounce">💧</div>
+      <h3 class="text-lg font-black uppercase tracking-tight text-black">DRINK WATER NOW!</h3>
+      <p class="text-xs font-bold text-gray-800 leading-snug">
+        You have been reading for <strong>50 minutes straight</strong>. Drink 250ml water now and stretch.
+      </p>
+      <button onclick="dismissWaterModal()" class="w-full brutal-border brutal-shadow-sm brutal-btn bg-black text-[#FFDE00] font-black py-2 uppercase text-xs">
+        Water Drank • Resume
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // --- DATA: one shared state, synced to Cloudflare KV (api/state), cached on this device ---
+    const $ = id => document.getElementById(id);
+    const SUBJECTS = ['Adv Accounts','Audit','FM','SM','DT','IDT','Costing','Law'];
+    const SCOL = {'Adv Accounts':'#FFDE00','Audit':'#FF9F89','FM':'#B8FFDA','SM':'#A8E6FF','DT':'#E3D1FF','IDT':'#FFC6E0','Costing':'#D6F27C','Law':'#FFD27F'};
+    const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const MON_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const MIN_D = '2026-10-01', MAX_D = '2026-12-31', LS_KEY = 'mission_state_v1', API = 'api/state';
+
+    function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function getTodayISTDate() {
+      const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+      return p;
+    }
+    function fmtDate(iso) {
+      const a = iso.split('-').map(Number);
+      return DAY_NAMES[new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay()] + ' ' + a[2] + ' ' + MON_NAMES[a[1] - 1];
+    }
+    function mergeState(a, b) {
+      const o = { entries: {}, times: {} };
+      [a, b].forEach(s => {
+        Object.keys(s.entries || {}).forEach(id => { const e = s.entries[id]; if (!o.entries[id] || e.u > o.entries[id].u) o.entries[id] = e; });
+        Object.keys(s.times || {}).forEach(d => { o.times[d] = Math.max(o.times[d] || 0, s.times[d] || 0); });
+      });
+      return o;
+    }
+    // Your existing history. Fixed ids + u:1 means it merges safely and anything you edit later wins.
+    function seedState() {
+      const e = {}; let c = 0;
+      const add = (id, date, subject, topic, done) => { e[id] = { id: id, date: date, subject: subject, topic: topic, done: done, c: ++c, u: 1 }; };
+      [['2026-10-25', ['Strategy Implementation', 'Internal Analysis (Part 1)']],
+       ['2026-10-26', ['External Analysis', 'Internal Analysis (Part 2)']],
+       ['2026-10-27', ['Introduction to SM', 'Strategy Choices (Porter/BCG/Ansoff)']]
+      ].forEach(r => r[1].forEach((t, i) => add('sm_' + r[0] + '_' + (i + 1), r[0], 'SM', t, true)));
+      [ ['2026-10-29', 'Audit Evidence', 'Leverages'], ['2026-10-30', 'Audit Evidence','Capital Structures'], ['2026-10-31', 'Audit Evidence', ' Capital Structure Thoeries'],
+        ['2026-11-01', 'Financial Statement'], ['2026-11-02', 'Nature, Audit Strategy, Documentation, Ethics'], ['2026-11-03', 'Risk Assessment'],
+        ['2026-11-04', 'Entities'], ['2026-11-05', 'Audit of Bank']
+      ].forEach(r => add(r[0] + '_t1', r[0], 'Audit', r[1], false));
+      return { entries: e, times: {} };
+    }
+    function loadLocal() {
+      let s = null;
+      try { s = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) {}
+      s = mergeState(s && s.entries ? s : { entries: {}, times: {} }, seedState());
+      try { // one-time import of ticks + hours from the old version on this device
+        if (!localStorage.getItem('mission_migrated')) {
+          const g = JSON.parse(localStorage.getItem('ca_sm_only_goals') || '{}'), t = JSON.parse(localStorage.getItem('ca_sm_only_daily_times') || '{}');
+          Object.keys(g).forEach(id => { const x = s.entries[id]; if (x && g[id] === true && !x.done) s.entries[id] = Object.assign({}, x, { done: true, u: 2 }); });
+          Object.keys(t).forEach(d => { s.times[d] = Math.max(s.times[d] || 0, parseInt(t[d], 10) || 0); });
+          localStorage.setItem('mission_migrated', '1');
+        }
+      } catch (e) {}
+      return s;
+    }
+    let S = loadLocal();
+    function persist() { try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+
+    // ---- sync ----
+    let rev = 1, sentRev = 0, pushT = null, syncing = false, again = false;
+    function setSync(k) {
+      const m = { ok: ['● Synced', '#B8FFDA'], busy: ['● Syncing…', '#FFF9D2'], off: ['● Offline • saved on this device', '#FFE4D6'], nokv: ['● Cloud not set up • saved on this device', '#FDE68A'] };
+      const b = $('syncBar'); b.textContent = m[k][0]; b.style.background = m[k][1];
+    }
+    function saveSoon() {
+      persist(); rev++;
+      if (!pushT) pushT = setTimeout(() => { pushT = null; sync(); }, isTimerRunning ? 60000 : 700);
+    }
+    async function sync() {
+      if (syncing) { again = true; return; }
+      syncing = true; setSync('busy');
+      const my = rev, post = my > sentRev;
+      try {
+        const r = await fetch(API, post ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(S), cache: 'no-store' } : { cache: 'no-store' });
+        if (r.status === 501) { setSync('nokv'); return; }
+        if (!r.ok) throw new Error('http ' + r.status);
+        const remote = await r.json();
+        if (post) sentRev = Math.max(sentRev, my);
+        const before = JSON.stringify(S);
+        S = mergeState(S, remote); persist();
+        if (JSON.stringify(S) !== before) renderAll();
+        setSync('ok');
+      } catch (e) { setSync('off'); }
+      finally { syncing = false; if (again) { again = false; sync(); } }
+    }
+    function initSync() {
+      sync();
+      setInterval(() => { if (!document.hidden) sync(); }, 20000);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) { if (rev > sentRev) sync(); } else sync(); });
+      window.addEventListener('online', sync);
+    }
+
+    // ---- helpers ----
+    function liveEntries() { return Object.keys(S.entries).map(k => S.entries[k]).filter(e => !e.del); }
+    function byDate() {
+      const m = {};
+      liveEntries().forEach(e => { (m[e.date] = m[e.date] || []).push(e); });
+      Object.keys(m).forEach(d => m[d].sort((a, b) => SUBJECTS.indexOf(a.subject) - SUBJECTS.indexOf(b.subject) || a.c - b.c));
+      return m;
+    }
+    function touch() { saveSoon(); renderAll(); }
+    function toggleGoal(id) {
+      const e = S.entries[id]; if (!e) return;
+      S.entries[id] = Object.assign({}, e, { done: !e.done, u: Date.now() }); touch();
+    }
+    function delTopic(id) {
+      const e = S.entries[id]; if (!e || !confirm('Remove "' + e.topic + '"?')) return;
+      S.entries[id] = Object.assign({}, e, { del: 1, u: Date.now() }); touch();
+    }
+
+    const WATER_INTERVAL_SECONDS = 50 * 60; // 50 Mins
+
+    let isTimerRunning = false;
+    let timerInterval = null;
+    let currentSessionSeconds = 0;
+    let secondsUntilNextWater = WATER_INTERVAL_SECONDS;
+    let wakeLock = null;
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    // Unlock audio on any touch so timer-triggered sounds work later
+    function unlockAudio() {
+      try {
+        const ctx = getAudioContext();
+        const b = ctx.createBuffer(1, 1, 22050);
+        const src = ctx.createBufferSource();
+        src.buffer = b; src.connect(ctx.destination); src.start(0);
+      } catch (e) {}
+    }
+    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(ev =>
+      document.addEventListener(ev, unlockAudio, { passive: true })
+    );
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && audioCtx && audioCtx.state !== 'running') audioCtx.resume();
+    });
+
+    function playWaterChime() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, now); // D5
+        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.45);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(880.00, now + 0.15); // A5
+        gain2.gain.setValueAtTime(0.3, now + 0.15);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.15);
+        osc2.stop(now + 0.75);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function playSavageAlarm() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.6);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.65);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    // Screen Wake Lock API (keeps mobile screen awake while reading)
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.log("WakeLock error:", err);
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock) {
+        wakeLock.release();
+        wakeLock = null;
+      }
+    }
+
+    // Browser / Mobile Notifications
+    function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        alert("Notifications not supported in this browser.");
+        return;
+      }
+      Notification.requestPermission().then(p => {
+        if (p === "granted") {
+          document.getElementById('btnEnableNotifications').innerText = "✅ Active";
+          document.getElementById('btnEnableNotifications').classList.add("bg-green-300");
+          new Notification("Mission Tracker", { body: "Alerts & water reminders active!" });
+        }
+      });
+    }
+
+    function sendSystemNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+          navigator.serviceWorker.ready
+            .then(reg => reg.showNotification(title, { body: body, vibrate: [200, 100, 200], icon: 'icons/icon-192.png' }))
+            .catch(() => { try { new Notification(title, { body: body }); } catch (e) {} });
+        } else {
+          try { new Notification(title, { body: body }); } catch (e) {}
+        }
+      }
+    }
+
+    // 12-Hour Live Clock
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      const dateStr = now.toLocaleDateString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      });
+
+      document.getElementById('liveClock').innerText = timeStr;
+      document.getElementById('liveDateStr').innerText = dateStr + " (IST)";
+      checkAccountabilityStatus(now);
+    }
+
+
+    // Pending topics from earlier days
+    let bannerSig = '';
+    function checkAccountabilityStatus(now) {
+      const today = getTodayISTDate();
+      const istHours = parseInt(now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', hour12: false }), 10);
+      const past = liveEntries().filter(e => e.date < today);
+      const pend = past.filter(e => !e.done).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : a.c - b.c);
+      const banner = $('accountabilityBanner');
+      const sig = pend.map(e => e.id).join(',') + '|' + past.length;
+      if (sig !== bannerSig) {
+        bannerSig = sig;
+        if (!past.length) { banner.className = 'hidden'; banner.innerHTML = ''; }
+        else if (pend.length) {
+          banner.className = 'block bg-[#FFE4D6] brutal-border brutal-shadow p-3 border-l-8 border-l-red-600';
+          banner.style.cssText = 'background:#FFE4D6;border-left:8px solid #dc2626;min-width:0';
+          banner.innerHTML = '<div class="rw" style="margin-top:0"><div class="tx"><span class="tg" style="background:#dc2626;color:#fff;border-color:#dc2626">Lagging Behind</span>' +
+            '<div style="font-weight:900;color:#b91c1c;text-transform:uppercase;margin-top:4px">' + pend.length + ' pending from earlier days</div>' +
+            '<div style="font-size:10px;margin-top:2px">' + pend.slice(0, 4).map(e => '[' + esc(e.subject) + ': ' + esc(e.topic) + ']').join(' ') + (pend.length > 4 ? ' +' + (pend.length - 4) + ' more' : '') + '</div>' +
+            '</div><button onclick="triggerSavageAlert()" class="xb brutal-btn" style="background:#121212;color:#FFDE00;font-size:9px">Alert</button></div>';
+        } else {
+          banner.className = 'block brutal-border brutal-shadow-sm p-2.5';
+          banner.style.cssText = 'background:#B8FFDA;border-left:8px solid #16a34a;min-width:0';
+          banner.innerHTML = '<div class="tx">🔥 <b>ALL CAUGHT UP.</b> Nothing pending from earlier days.</div>';
+        }
+      }
+      const key = 'alert_shown_' + today;
+      if (pend.length && istHours >= 11 && !sessionStorage.getItem(key)) { sessionStorage.setItem(key, 'true'); triggerSavageAlert(); }
+    }
+
+    function triggerSavageAlert() {
+      playSavageAlarm();
+      sendSystemNotification("⚠️ YOU ARE LAGGING BEHIND!", "Topics from earlier days are still pending. Fix it now!");
+      document.getElementById('savageModal').classList.remove('hidden');
+    }
+
+    function closeSavageModal() {
+      document.getElementById('savageModal').classList.add('hidden');
+    }
+
+    // Time Formatters & Stopwatch
+    function formatTime(sec) {
+      const h = Math.floor(sec / 3600).toString().padStart(2, '0');
+      const m = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function updateTimerDisplays() {
+      document.getElementById('sessionStopwatch').innerText = formatTime(currentSessionSeconds);
+      const mins = Math.floor(secondsUntilNextWater / 60);
+      const secs = (secondsUntilNextWater % 60).toString().padStart(2, '0');
+      document.getElementById('nextWaterCountdown').innerText = isTimerRunning 
+        ? `${mins}m ${secs}s (Active)` 
+        : `${mins}m ${secs}s (Paused)`;
+    }
+
+    // ---- Timestamp-based timer (keeps counting while screen is locked) ----
+    const LS_TIMER_STATE = 'sm_timer_state_v1';
+    let lastTickMs = 0;
+    let carryMs = 0;
+
+    function saveTimerState() {
+      try {
+        localStorage.setItem(LS_TIMER_STATE, JSON.stringify({
+          running: isTimerRunning, lastTickMs, carryMs,
+          currentSessionSeconds, secondsUntilNextWater
+        }));
+      } catch (e) {}
+    }
+
+    function tick() {
+      if (!isTimerRunning) return;
+      const nowMs = Date.now();
+      const elapsed = Math.max(0, nowMs - lastTickMs) + carryMs;
+      lastTickMs = nowMs;
+      const secs = Math.floor(elapsed / 1000);
+      carryMs = elapsed - secs * 1000;
+      if (secs <= 0) return;
+
+      const today = getTodayISTDate();
+      if (!S.times[today]) S.times[today] = 0;
+      currentSessionSeconds += secs;
+      S.times[today] += secs;
+      secondsUntilNextWater -= secs;
+
+      let fire = false;
+      if (secondsUntilNextWater <= 0) {
+        fire = true;
+        secondsUntilNextWater = WATER_INTERVAL_SECONDS - ((-secondsUntilNextWater) % WATER_INTERVAL_SECONDS);
+      }
+
+      if (secs > 1 || currentSessionSeconds % 5 === 0) {
+        saveSoon();
+        evaluateDailyRegistration();
+      }
+      saveTimerState();
+      if (fire) fireWaterReminder();
+      updateTimerDisplays();
+    }
+
+    function startTimer(restore) {
+      if (isTimerRunning) return;
+      isTimerRunning = true;
+      requestWakeLock();
+      document.getElementById('timerStatusLabel').innerText = "Status: 🔥 Deep Reading Mode Active • Screen kept awake";
+      document.getElementById('timerStatusLabel').className = "text-[10px] font-bold text-green-700";
+
+      const today = getTodayISTDate();
+      if (!S.times[today]) S.times[today] = 0;
+
+      if (restore !== true) { lastTickMs = Date.now(); carryMs = 0; }
+      timerInterval = setInterval(tick, 1000);
+      saveTimerState();
+      tick();
+      updateTimerDisplays();
+    }
+
+    function pauseTimer() {
+      if (!isTimerRunning) return;
+      tick();
+      isTimerRunning = false;
+      clearInterval(timerInterval);
+      releaseWakeLock();
+      carryMs = 0;
+      saveTimerState();
+      document.getElementById('timerStatusLabel').innerText = "Status: ⏸ Reading Paused • Water countdown frozen";
+      document.getElementById('timerStatusLabel').className = "text-[10px] font-bold text-gray-600";
+      saveSoon();
+      evaluateDailyRegistration();
+      updateTimerDisplays();
+    }
+
+    function resetTimer() {
+      if (confirm("Reset current study session stopwatch?")) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        releaseWakeLock();
+        currentSessionSeconds = 0;
+        secondsUntilNextWater = WATER_INTERVAL_SECONDS;
+        carryMs = 0;
+        saveTimerState();
+        document.getElementById('timerStatusLabel').innerText = "Status: Reset • Ready to read";
+        document.getElementById('timerStatusLabel').className = "text-[10px] font-bold text-gray-600";
+        updateTimerDisplays();
+      }
+    }
+
+    function fireWaterReminder() {
+      playWaterChime();
+      sendSystemNotification("💧 DRINK WATER NOW!", "50 minutes of deep focus elapsed. Drink 250ml water now!");
+      document.getElementById('waterModal').classList.remove('hidden');
+    }
+
+    function dismissWaterModal() {
+      document.getElementById('waterModal').classList.add('hidden');
+    }
+
+    // ---- rendering ----
+    function evaluateDailyRegistration() {
+      const today = getTodayISTDate(), ents = byDate()[today] || [], b = $('todayRegistrationBadge');
+      const base = 'text-[8px] font-black uppercase px-2 py-0.5 brutal-border ';
+      if (!ents.length) { b.innerText = 'Nothing planned today'; b.className = base + 'bg-gray-100 text-gray-700'; return; }
+      const d = ents.filter(e => e.done).length;
+      if (d === ents.length) { b.innerText = '✓ Cleared: ' + formatTime(S.times[today] || 0); b.className = base + 'bg-emerald-300 text-black'; }
+      else { b.innerText = '⚠️ ' + d + '/' + ents.length + ' done today'; b.className = base + 'bg-amber-100 text-amber-800'; }
+    }
+    function applyLabels() {
+      const t = byDate()[getTodayISTDate()] || [];
+      const subs = SUBJECTS.filter(x => t.some(e => e.subject === x));
+      $('hdrTitle').textContent = subs.length ? subs.join(' + ') : 'Mission Jan 27';
+    }
+    function dayCard(date, ents, showTime) {
+      const today = getTodayISTDate(), d = ents.filter(e => e.done).length, all = d === ents.length;
+      let h = '<div class="day" style="background:' + (date === today ? '#FFF9D2' : all ? '#F2FFF7' : '#fff') + '"><div class="dh"><div><span class="dt">' + fmtDate(date) + '</span>' +
+        (date === today ? ' <span class="tg" style="background:#121212;color:#FFDE00">Today</span>' : '') + '</div>' +
+        '<span class="pill" style="background:' + (all ? '#B8FFDA' : '#f3f4f6') + '">' + (all ? 'Cleared 🔥' : d + '/' + ents.length + ' done') + '</span></div>';
+      if (showTime) h += '<div class="tmrow">⏱ Read: <b class="mono">' + (S.times[date] ? formatTime(S.times[date]) : '--:--:--') + '</b></div>';
+      SUBJECTS.filter(x => ents.some(e => e.subject === x)).forEach(sub => {
+        h += '<div class="sg"><span class="tg" style="background:' + SCOL[sub] + '">' + esc(sub) + '</span>';
+        ents.filter(e => e.subject === sub).forEach(e => {
+          h += '<div class="rw"><div class="tx' + (e.done ? ' fin' : '') + '">' + esc(e.topic) + '</div>' +
+            '<button class="dn brutal-btn' + (e.done ? ' on' : '') + '" onclick="toggleGoal(\'' + e.id + '\')">' + (e.done ? '✓ Done' : 'Pending') + '</button></div>';
+        });
+        h += '</div>';
+      });
+      return h + '</div>';
+    }
+    function renderSchedule() {
+      const m = byDate(), today = getTodayISTDate(), dates = Object.keys(m).sort(), all = liveEntries();
+      const dn = all.filter(e => e.done).length, pct = all.length ? Math.round(dn / all.length * 100) : 0;
+      $('chaptersClearedCount').innerText = dn + ' / ' + all.length;
+      $('sprintProgressPct').innerText = pct + '%';
+      $('sprintProgressBar').style.width = pct + '%';
+      const back = dates.filter(d => d < today && m[d].some(e => !e.done)), up = dates.filter(d => d > today).slice(0, 4);
+      let h = '';
+      if (back.length) h += '<div class="sh" style="color:#b91c1c">Backlog: finish these first</div>' + back.map(d => dayCard(d, m[d])).join('');
+      h += '<div class="sh">Today</div>' + (m[today] ? dayCard(today, m[today]) : '<div class="empty">Nothing planned for today. Add topics in the Plan tab.</div>');
+      if (up.length) h += '<div class="sh">Coming up</div>' + up.map(d => dayCard(d, m[d])).join('');
+      $('dailyScheduleCards').innerHTML = h;
+    }
+    let filt = null;
+    function setFilt(x) { filt = (filt === x) ? null : x; renderProgressLog(); }
+    function renderProgressLog() {
+      const m = byDate(), all = liveEntries();
+      const sec = Object.keys(S.times).reduce((a, d) => a + S.times[d], 0);
+      $('logTotals').textContent = formatTime(sec) + ' read in total • ' + all.filter(e => e.done).length + '/' + all.length + ' topics done';
+      $('subjTiles').innerHTML = SUBJECTS.filter(x => all.some(e => e.subject === x)).map(x => {
+        const a = all.filter(e => e.subject === x), d = a.filter(e => e.done).length;
+        return '<button class="tile brutal-btn' + (filt === x ? ' sel' : '') + '" style="background:' + SCOL[x] + '" onclick="setFilt(\'' + x + '\')"><b>' + esc(x) + '</b><span class="mono">' + d + '/' + a.length + '</span><i>' + (d === a.length ? '✓ Finished' : '&nbsp;') + '</i><div class="bar"><div style="width:' + Math.round(d / a.length * 100) + '%"></div></div></button>';
+      }).join('');
+      const dates = Object.keys(m).concat(Object.keys(S.times).filter(d => !m[d])).sort().reverse();
+      let h = '';
+      dates.forEach(d => {
+        const ents = (m[d] || []).filter(e => !filt || e.subject === filt);
+        if (ents.length) h += dayCard(d, ents, true);
+        else if (!filt) h += '<div class="day" style="background:#fff"><div class="dh"><span class="dt">' + fmtDate(d) + '</span></div><div class="tmrow">⏱ Read: <b class="mono">' + formatTime(S.times[d] || 0) + '</b></div></div>';
+      });
+      $('progressLogList').innerHTML = h || '<div class="empty">Nothing logged yet.</div>';
+    }
+    function renderAll() { applyLabels(); renderSchedule(); renderProgressLog(); renderPlan(); evaluateDailyRegistration(); checkAccountabilityStatus(new Date()); }
+
+    // ---- plan tab ----
     function initPlanForm() {
       const t = getTodayISTDate(), d = $('pDate');
-      const minAllowed = (t >= MIN_D && t <= MAX_D) ? t : MIN_D;
-      d.min = minAllowed;
-      d.max = MAX_D;
-      d.value = minAllowed;
+      d.min = MIN_D; d.max = MAX_D; d.value = (t >= MIN_D && t <= MAX_D) ? t : MIN_D;
       $('pSubj').innerHTML = '<option value="" disabled selected>Select subject</option>' + SUBJECTS.map(x => '<option value="' + esc(x) + '">' + esc(x) + '</option>').join('');
     }
     function jumpDate(d) { $('pDate').value = d; renderPlan(); }
     function renderPlan() {
       if (!window._adding) $('pMsg').textContent = '';
-      const today = getTodayISTDate();
-      const selected = $('pDate').value;
-      if (!selected || selected < today) $('pDate').value = (today >= MIN_D && today <= MAX_D) ? today : MIN_D;
-      const m = byDate() || {};
-      const d = $('pDate').value;
-      const ents = Array.isArray(m[d]) ? m[d] : [];
+      const m = byDate(), d = $('pDate').value, ents = m[d] || [];
       $('pDateLbl').textContent = d ? fmtDate(d) : '(pick a date)';
       let h = '';
       SUBJECTS.filter(x => ents.some(e => e.subject === x)).forEach(sub => {
@@ -25,21 +792,13 @@
         h += '</div>';
       });
       $('pList').innerHTML = h || '<div class="empty" style="margin-bottom:0">Nothing planned for this day yet.</div>';
-      $('pChips').innerHTML = Object.keys(m)
-        .filter(x => x >= today && x >= MIN_D)
-        .sort()
-        .map(x => {
-          const count = Array.isArray(m[x]) ? m[x].length : 0;
-          return '<button class="chip' + (x === d ? ' sel' : '') + '" onclick="jumpDate(\'' + x + '\')">' + fmtDate(x) + ' • ' + count + '</button>';
-        })
-        .join('') || '<span style="font-size:11px">No upcoming dates</span>';
+      $('pChips').innerHTML = Object.keys(m).filter(x => x >= MIN_D).sort().map(x =>
+        '<button class="chip' + (x === d ? ' sel' : '') + '" onclick="jumpDate(\'' + x + '\')">' + fmtDate(x) + ' • ' + m[x].length + '</button>').join('') || '<span style="font-size:11px;font-weight:700;color:#555">No planned days yet.</span>';
     }
     function addTopic() {
       const date = $('pDate').value, subj = $('pSubj').value, topic = $('pTopic').value.replace(/\s+/g, ' ').trim(), msg = $('pMsg');
       const say = (t, ok) => { msg.textContent = t; msg.style.color = ok ? '#166534' : '#b91c1c'; };
-      const today = getTodayISTDate();
       if (!date || date < MIN_D || date > MAX_D) return say('Pick a date in Oct, Nov or Dec 2026.');
-      if (date < today) return say('Past dates already happened — choose today or a future day.');
       if (!subj) return say('Select a subject first.');
       if (!topic) return say('Type a topic first.');
       if (liveEntries().some(e => e.date === date && e.subject === subj && e.topic.toLowerCase() === topic.toLowerCase())) return say('That topic is already added for this day.');
@@ -48,3 +807,51 @@
       $('pTopic').value = ''; window._adding = true; touch(); window._adding = false; say('Added ' + subj + ' on ' + fmtDate(date) + '. Add another or switch subject.', true);
       $('pTopic').focus();
     }
+
+    function switchTab(tab) {
+      const tabs = {
+        sprint: ['tabContentSprint', 'navBtnSprint'],
+        progress: ['tabContentProgress', 'navBtnProgress'],
+        plan: ['tabContentPlan', 'navBtnPlan']
+      };
+      const on = "brutal-border brutal-shadow-sm brutal-btn bg-black text-white font-black py-2.5 text-xs uppercase flex items-center justify-center gap-1.5";
+      const off = on.replace('bg-black text-white', 'bg-white text-black');
+      Object.keys(tabs).forEach(k => {
+        document.getElementById(tabs[k][0]).classList.toggle('hidden', k !== tab);
+        document.getElementById(tabs[k][1]).className = (k === tab) ? on : off;
+      });
+      if (tab === 'progress') renderProgressLog();
+      if (tab === 'plan') renderPlan();
+      window.scrollTo(0, 0);
+    }
+
+    // Init
+    window.onload = function() {
+      initPlanForm();
+      renderAll();
+      initSync();
+      updateTimerDisplays();
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // Restore a running timer after the app was closed / reloaded
+      try {
+        const saved = JSON.parse(localStorage.getItem(LS_TIMER_STATE) || 'null');
+        if (saved) {
+          currentSessionSeconds = saved.currentSessionSeconds || 0;
+          secondsUntilNextWater = saved.secondsUntilNextWater || WATER_INTERVAL_SECONDS;
+          carryMs = saved.carryMs || 0;
+          lastTickMs = saved.lastTickMs || Date.now();
+          updateTimerDisplays();
+          if (saved.running) startTimer(true);
+        }
+      } catch (e) {}
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && isTimerRunning) { tick(); requestWakeLock(); }
+      });
+    };
+  </script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
+</body>
+</html>
