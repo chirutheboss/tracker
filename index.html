@@ -1,7 +1,9 @@
     function initPlanForm() {
       const t = getTodayISTDate(), d = $('pDate');
       const minAllowed = (t >= MIN_D && t <= MAX_D) ? t : MIN_D;
-      d.min = minAllowed; d.max = MAX_D; d.value = minAllowed;
+      d.min = minAllowed;
+      d.max = MAX_D;
+      d.value = minAllowed;
       $('pSubj').innerHTML = '<option value="" disabled selected>Select subject</option>' + SUBJECTS.map(x => '<option value="' + esc(x) + '">' + esc(x) + '</option>').join('');
     }
     function jumpDate(d) { $('pDate').value = d; renderPlan(); }
