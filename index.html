@@ -51,9 +51,9 @@
     header h1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .card{background:#fff;border:3px solid #121212;box-shadow:4px 4px 0 #121212;padding:14px;min-width:0}
     .lbl{display:block;font-size:10px;font-weight:900;text-transform:uppercase;color:#555;margin:12px 0 4px}
-    .fld{display:block;width:100%;min-width:0;max-width:100%;min-height:46px;border:3px solid #121212;background:#FAF8F0;padding:8px 10px;font:700 16px 'Space Grotesk',sans-serif;color:#121212;border-radius:0;box-sizing:border-box}
+    .fld{display:block;width:100%;min-width:0;max-width:100%;min-height:46px;border:3px solid #121212;background:#FAF8F0;padding:8px 10px;font:700 16px 'Space Grotesk',sans-serif;color:#121212;border-radius:0}
     .fld:focus{outline:3px solid #FF4D00;outline-offset:1px}
-    .bigbtn{display:block;width:100%;min-height:46px;margin-top:14px;border:3px solid #121212;box-shadow:2.5px 2.5px 0 #121212;background:#00E599;font:900 13px 'Space Grotesk',sans-serif;text-transform:uppercase}
+    .bigbtn{display:block;width:100%;min-height:46px;margin-top:14px;border:3px solid #121212;box-shadow:2.5px 2.5px 0 #121212;background:#00E599;font:900 13px 'Space Grotesk',sans-serif;text-transform:uppercase;color:#121212;border-radius:0}
     .rw{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-top:8px}
     .tx{flex:1;min-width:0;overflow-wrap:anywhere;font-size:12px;font-weight:700;line-height:1.35}
     .tx.fin{text-decoration:line-through;color:#9ca3af}
@@ -152,10 +152,10 @@
           
           <!-- Distinct Play and Pause Controls -->
           <div class="flex items-center justify-center gap-2 pt-1">
-            <button id="btnPlayTimer" onclick="startTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#00E599] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1">
+            <button id="btnPlayTimer" onclick="startTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#00E599] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1.5">
               <span>▶</span> Play
             </button>
-            <button id="btnPauseTimer" onclick="pauseTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FFDE00] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1">
+            <button id="btnPauseTimer" onclick="pauseTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FFDE00] text-black font-black px-4 py-2 text-xs uppercase flex items-center gap-1.5">
               <span>⏸</span> Pause
             </button>
             <button id="btnResetTimer" onclick="resetTimer()" class="brutal-border brutal-shadow-sm brutal-btn bg-[#FF9F89] text-black font-black px-3 py-2 text-xs uppercase">
@@ -220,7 +220,7 @@
         <p style="font-size:11px;font-weight:600;margin-top:3px;line-height:1.35">Pick a date, pick a subject, type a topic, tap Add. Repeat for more topics or more subjects on the same day.</p>
       </div>
       <div class="card">
-        <label class="lbl" for="pDate" style="margin-top:0">Date (Nov - Dec 2026)</label>
+        <label class="lbl" for="pDate" style="margin-top:0">Date (Oct - Dec 2026)</label>
         <input id="pDate" type="date" class="fld" oninput="renderPlan()" onchange="renderPlan()">
         <label class="lbl" for="pSubj">Subject</label>
         <select id="pSubj" class="fld"></select>
@@ -298,9 +298,9 @@
     const SCOL = {'Adv Accounts':'#FFDE00','Audit':'#FF9F89','FM':'#B8FFDA','SM':'#A8E6FF','DT':'#E3D1FF','IDT':'#FFC6E0','Costing':'#D6F27C','Law':'#FFD27F'};
     const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const MON_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const MIN_D = '2026-11-01', MAX_D = '2026-12-31', LS_KEY = 'mission_state_v1', API = 'api/state';
+    const MIN_D = '2026-10-01', MAX_D = '2026-12-31', LS_KEY = 'mission_state_v1', API = 'api/state';
 
-    function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
     function pad2(n) { return String(n).padStart(2, '0'); }
     function getTodayISTDate() {
       const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -327,8 +327,8 @@
        ['2026-10-27', ['Introduction to SM', 'Strategy Choices (Porter/BCG/Ansoff)']]
       ].forEach(r => r[1].forEach((t, i) => add('sm_' + r[0] + '_' + (i + 1), r[0], 'SM', t, true)));
       [ ['2026-10-29', 'Audit Evidence', 'Leverages'], ['2026-10-30', 'Audit Evidence','Capital Structures'], ['2026-10-31', 'Audit Evidence', ' Capital Structure Thoeries'],
-       ['2026-11-01', 'Financial Statement'], ['2026-11-02', 'Nature, Audit Strategy, Documentation, Ethics'], ['2026-11-03', 'Risk Assessment'],
-       ['2026-11-04', 'Entities'], ['2026-11-05', 'Audit of Bank']
+        ['2026-11-01', 'Financial Statement'], ['2026-11-02', 'Nature, Audit Strategy, Documentation, Ethics'], ['2026-11-03', 'Risk Assessment'],
+        ['2026-11-04', 'Entities'], ['2026-11-05', 'Audit of Bank']
       ].forEach(r => add(r[0] + '_t1', r[0], 'Audit', r[1], false));
       return { entries: e, times: {} };
     }
@@ -352,8 +352,8 @@
     // ---- sync ----
     let rev = 1, sentRev = 0, pushT = null, syncing = false, again = false;
     function setSync(k) {
-      const m = { ok: ['● Synced', '#B8FFDA'], busy: ['● Syncing…', '#FFF9D2'], off: ['● Offline • saved on this device', '#FFE4D6'], nokv: ['● Cloud not set up • saved on this device', '#FFE4D6'] }[k];
-      const b = $('syncBar'); b.textContent = m[0]; b.style.background = m[1];
+      const m = { ok: ['● Synced', '#B8FFDA'], busy: ['● Syncing…', '#FFF9D2'], off: ['● Offline • saved on this device', '#FFE4D6'], nokv: ['● Cloud not set up • saved on this device', '#FDE68A'] };
+      const b = $('syncBar'); b.textContent = m[k][0]; b.style.background = m[k][1];
     }
     function saveSoon() {
       persist(); rev++;
@@ -568,8 +568,8 @@
           banner.style.cssText = 'background:#FFE4D6;border-left:8px solid #dc2626;min-width:0';
           banner.innerHTML = '<div class="rw" style="margin-top:0"><div class="tx"><span class="tg" style="background:#dc2626;color:#fff;border-color:#dc2626">Lagging Behind</span>' +
             '<div style="font-weight:900;color:#b91c1c;text-transform:uppercase;margin-top:4px">' + pend.length + ' pending from earlier days</div>' +
-            '<div style="font-size:10px;margin-top:2px">' + pend.slice(0, 4).map(e => '[' + esc(e.subject) + ': ' + esc(e.topic) + ']').join(' ') + (pend.length > 4 ? ' +' + (pend.length - 4) + ' more' : '') + '</div></div>' +
-            '<button onclick="triggerSavageAlert()" class="xb brutal-btn" style="background:#121212;color:#FFDE00;font-size:9px">Alert</button></div>';
+            '<div style="font-size:10px;margin-top:2px">' + pend.slice(0, 4).map(e => '[' + esc(e.subject) + ': ' + esc(e.topic) + ']').join(' ') + (pend.length > 4 ? ' +' + (pend.length - 4) + ' more' : '') + '</div>' +
+            '</div><button onclick="triggerSavageAlert()" class="xb brutal-btn" style="background:#121212;color:#FFDE00;font-size:9px">Alert</button></div>';
         } else {
           banner.className = 'block brutal-border brutal-shadow-sm p-2.5';
           banner.style.cssText = 'background:#B8FFDA;border-left:8px solid #16a34a;min-width:0';
@@ -759,15 +759,14 @@
       $('logTotals').textContent = formatTime(sec) + ' read in total • ' + all.filter(e => e.done).length + '/' + all.length + ' topics done';
       $('subjTiles').innerHTML = SUBJECTS.filter(x => all.some(e => e.subject === x)).map(x => {
         const a = all.filter(e => e.subject === x), d = a.filter(e => e.done).length;
-        return '<button class="tile brutal-btn' + (filt === x ? ' sel' : '') + '" style="background:' + SCOL[x] + '" onclick="setFilt(\'' + x + '\')"><b>' + esc(x) + '</b><span class="mono">' + d + '/' + a.length + '</span>' +
-          (d === a.length ? '<i>✓ Finished</i>' : '<i>&nbsp;</i>') + '<div class="bar"><div style="width:' + Math.round(d / a.length * 100) + '%"></div></div></button>';
+        return '<button class="tile brutal-btn' + (filt === x ? ' sel' : '') + '" style="background:' + SCOL[x] + '" onclick="setFilt(\'' + x + '\')"><b>' + esc(x) + '</b><span class="mono">' + d + '/' + a.length + '</span><i>' + (d === a.length ? '✓ Finished' : '&nbsp;') + '</i><div class="bar"><div style="width:' + Math.round(d / a.length * 100) + '%"></div></div></button>';
       }).join('');
       const dates = Object.keys(m).concat(Object.keys(S.times).filter(d => !m[d])).sort().reverse();
       let h = '';
       dates.forEach(d => {
         const ents = (m[d] || []).filter(e => !filt || e.subject === filt);
         if (ents.length) h += dayCard(d, ents, true);
-        else if (!filt) h += '<div class="day" style="background:#fff"><div class="dh"><span class="dt">' + fmtDate(d) + '</span></div><div class="tmrow">⏱ Read: <b class="mono">' + formatTime(S.times[d]) + '</b> (no topics logged)</div></div>';
+        else if (!filt) h += '<div class="day" style="background:#fff"><div class="dh"><span class="dt">' + fmtDate(d) + '</span></div><div class="tmrow">⏱ Read: <b class="mono">' + formatTime(S.times[d] || 0) + '</b></div></div>';
       });
       $('progressLogList').innerHTML = h || '<div class="empty">Nothing logged yet.</div>';
     }
@@ -799,7 +798,7 @@
     function addTopic() {
       const date = $('pDate').value, subj = $('pSubj').value, topic = $('pTopic').value.replace(/\s+/g, ' ').trim(), msg = $('pMsg');
       const say = (t, ok) => { msg.textContent = t; msg.style.color = ok ? '#166534' : '#b91c1c'; };
-      if (!date || date < MIN_D || date > MAX_D) return say('Pick a date in Nov or Dec 2026.');
+      if (!date || date < MIN_D || date > MAX_D) return say('Pick a date in Oct, Nov or Dec 2026.');
       if (!subj) return say('Select a subject first.');
       if (!topic) return say('Type a topic first.');
       if (liveEntries().some(e => e.date === date && e.subject === subj && e.topic.toLowerCase() === topic.toLowerCase())) return say('That topic is already added for this day.');
